@@ -23,7 +23,7 @@ $(document).ready(function() {
     }
   })
   $('.list').on('click', '.like', function(e) {
-    e.stopPropagation(); 
+    e.stopPropagation();
     if (userId == '') {
       alert('请登录！');
     } else {
@@ -36,7 +36,7 @@ $(document).ready(function() {
   })
   $('.headRight').on('click', '.back', function() {
     sessionStorage.removeItem("userId");
-    window.location.href = 'http://localhost/index.html';
+    window.location.href = 'http://www.hboss.com';
   })
   $('.country a').click(function() {
     if (chioceCountry == false) {
