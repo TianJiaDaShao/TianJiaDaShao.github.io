@@ -337,6 +337,22 @@
   margin-right: 6px;
 }
 
+.myPublishButtom{
+  overflow: hidden;
+  margin-top: 10px;
+  padding-left: 28px;
+}
+
+.myPublishButtom a{
+  float: left;
+  width: 30px;
+  text-align: center;
+  border: 1px solid #e6e6e6;
+  border-radius: 20px;
+  padding: 6px;
+  margin-right: 10px;
+}
+
 .details {
   display: none;
   font-size: 20px;

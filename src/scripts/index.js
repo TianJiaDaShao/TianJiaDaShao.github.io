@@ -20,7 +20,7 @@ $(document).ready(function() {
         jobId = $(this).attr('id'),
         type = $(this).attr('type');
       like(title, type, jobId, 1);
-      $(this)[0].className = 'like';
+      $(this)[0].className = 'collection like';
     }
   })
   $('.list').on('click', '.like', function(e) {
@@ -33,7 +33,7 @@ $(document).ready(function() {
         jobId = $(this).attr('id'),
         type = $(this).attr('type');
       like(title, type, jobId, 0);
-      $(this)[0].className = 'unlike';
+      $(this)[0].className = 'collection unlike';
     }
   })
   $('.headRight').on('click', '.back', function() {
@@ -186,6 +186,39 @@ $(document).ready(function() {
     unShade();
   })
   //消除shade
+  $('body').on('click', '.myPublishButtom a', function() {
+    var index = $(this).index(),
+      id = $(this).parent().next().next().next().children()[1].attributes[0].value,
+      type = $(this).parent().next().next().next().children()[1].attributes[1].value;
+    if (type == 1) {
+      type = "job"
+    } else {
+      type = 'someone'
+    }
+    switch (index) {
+      case 0:
+        $.ajax({
+          url: url + 'job/user/infoRefresh',
+          data: {
+            type: type,
+            id: id
+          },
+          success: function() {
+            if (type == "job") {
+              $('#pages li:eq(0)').click();
+            } else {
+              $('#pages li:eq(2)').click();
+            }
+          }
+        })
+        break;
+      case 1:
+
+        break;
+      default:
+
+    }
+  })
 })
 
 function user() {
@@ -424,6 +457,7 @@ function searchSomeone() {
   })
 }
 //搜索找人办事
+
 function sort(index) {
   var countriesId = $('.country a span')[0].id;
   if (index == 0) {
@@ -574,72 +608,72 @@ function recruitJob() {
 function recruitSubmit() {
   $('body').on('click', '.recruit #submit', function() {
     var cityId = '',
-    companyName = '',
-    companyLogo = '',
-    companyPublicity = '',
-    companyQRCode = '',
-    companyInfo = '',
-    jobType = '',
-    jobNature= '',
-    jobWelfare = '',
-    jobSalary = '',
-    jobRequirements = '',
-    title = '',
-    tel = '',
-    details = '';
-    if($('#cityList .recruitActive').length != 0){
+      companyName = '',
+      companyLogo = '',
+      companyPublicity = '',
+      companyQRCode = '',
+      companyInfo = '',
+      jobType = '',
+      jobNature = '',
+      jobWelfare = '',
+      jobSalary = '',
+      jobRequirements = '',
+      title = '',
+      tel = '',
+      details = '';
+    if ($('#cityList .recruitActive').length != 0) {
       cityId = $('#cityList .recruitActive')[0].classList[0];
-    }else {
+    } else {
       alert('请选择城市');
     }
     companyName = $('.cardAK .backInput:eq(0) input').val();
-    if(companyName != ''){
+    if (companyName != '') {
       companyLogo = $('#LOGO img').attr('src');
       companyPublicity = $('#myArticleForm img').attr('src');
       companyQRCode = $('#formBox1 img').attr('src');
       companyInfo = $('.cardAK textarea').val();
     }
-    if($('#jobType .recruitActive').length != 0){
+    if ($('#jobType .recruitActive').length != 0) {
       jobType = $('#jobType .recruitActive')[0].classList[0];
-    }else {
+    } else {
       alert('请选择工作种类');
     }
-    if($('#jobNature .recruitActive').length != 0){
+    if ($('#jobNature .recruitActive').length != 0) {
       jobNature = $('#jobNature .recruitActive')[0].classList[0];
-    }else {
+    } else {
       alert('请选择工作性质');
     }
-    if($('#jobWelfare .recruitActive').length != 0){
+    if ($('#jobWelfare .recruitActive').length != 0) {
       jobWelfare = $('#jobWelfare .recruitActive')[0].classList[0];
-    }else {
+    } else {
       alert('请选择福利待遇');
     }
-    if($('#jobSalary .recruitActive').length != 0){
+    if ($('#jobSalary .recruitActive').length != 0) {
       jobSalary = $('#jobSalary .recruitActive')[0].classList[0];
-    }else {
+    } else {
       alert('请选择薪资区间');
     }
-    if($('#jobRequirements .recruitActive').length != 0){
+    if ($('#jobRequirements .recruitActive').length != 0) {
       jobRequirements = $('#jobRequirements .recruitActive')[0].classList[0];
-    }else {
+    } else {
       alert('请选择居留要求');
     }
-    if($('#recruitTitle').val() != ''){
+    if ($('#recruitTitle').val() != '') {
       title = $('#recruitTitle').val();
-    }else {
+    } else {
       alert('请输入标题');
     }
-    if($('#recruitTel').val() != ''){
+    if ($('#recruitTel').val() != '') {
       tel = $('#recruitTel').val();
-    }else {
+    } else {
       alert('请输入电话');
     }
-    if($('.recruit textarea').val() != ''){
+    if ($('.recruit textarea').val() != '') {
       details = $('.recruit textarea').val();
-    }else {
+    } else {
       alert('请输入详情');
     }
-    if(cityId != '' && jobType != '' && jobNature != '' && jobWelfare != '' && jobSalary != '' && jobRequirements != '' && title != '' && tel != '' && details != ''){
+    if (cityId != '' && jobType != '' && jobNature != '' && jobWelfare != '' && jobSalary != '' && jobRequirements != '' && title != '' && tel != '' && details != '') {
       $.ajax({
         url: url + 'job/info/publishJob',
         data: {
@@ -658,7 +692,7 @@ function recruitSubmit() {
           companyQRCode: companyQRCode,
           companyInfo: companyInfo
         },
-        success: function (res) {
+        success: function(res) {
           console.log(res);
         }
       })
@@ -730,10 +764,16 @@ function myPublish() {
     },
     success: function(res) {
       indexList(res.data.jobList.concat(res.data.someoneList));
+      myPublishButtom();
     }
   })
 }
 //我的发布
+
+function myPublishButtom() {
+  $('.jobWelfareName').after('<div class="myPublishButtom"><a href="javascript:;">顶</a></div>');//<a href="javascript:;">关闭</a><a href="javascript:;">编辑</a>
+}
+//我的发布按钮
 
 function myCollection() {
   $.ajax({
