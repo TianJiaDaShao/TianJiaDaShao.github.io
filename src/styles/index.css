@@ -456,6 +456,11 @@
   width: 500px;
 }
 
+.backInput form img{
+  height: 32px;
+  margin: 0 30px;
+}
+
 .recruit h3, .recruitSomeone h3{
   font-size: 18px;
   padding: 10px 22px;
@@ -482,6 +487,10 @@
   font-size: 18px;
   float: right;
   margin: 20px 36px 34px;
+}
+
+.recruit .recruitActive{
+  color: #cd0200;
 }
 
 .border-top {

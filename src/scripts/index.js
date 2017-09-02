@@ -20,6 +20,7 @@ $(document).ready(function() {
         jobId = $(this).attr('id'),
         type = $(this).attr('type');
       like(title, type, jobId, 1);
+      $(this)[0].className = 'like';
     }
   })
   $('.list').on('click', '.like', function(e) {
@@ -32,11 +33,12 @@ $(document).ready(function() {
         jobId = $(this).attr('id'),
         type = $(this).attr('type');
       like(title, type, jobId, 0);
+      $(this)[0].className = 'unlike';
     }
   })
   $('.headRight').on('click', '.back', function() {
     sessionStorage.removeItem("userId");
-    window.location.href = 'http://www.hboss.com';
+    window.location.href = 'http://localhost/index.html';
   })
   $('.country a').click(function() {
     if (chioceCountry == false) {
@@ -146,6 +148,12 @@ $(document).ready(function() {
     }
   })
   //展开或收起详情
+  $('body').on('click', 'form a', function() {
+    $(this).next().css('display', 'block');
+    $(this).css('display', 'none');
+    $(this).prev().css('display', 'none');
+  })
+  //重新选择图片
   $('.articleRight').on('click', '.sort li', function() {
     sort($(this).index());
     $('.sortActive').removeClass();
@@ -170,6 +178,10 @@ $(document).ready(function() {
     recruitSomeone();
   })
   //发布找人办事
+  $('body').on('click', '.recruit .backInput a', function() {
+    $(this).parent().children().removeClass('recruitActive');
+    $(this).addClass('recruitActive');
+  })
   $('body').on('click', '#shade', function() {
     unShade();
   })
@@ -449,13 +461,70 @@ function editCompany() {
   var company = '<div class="card">' +
     '<div class="face front"><h2>免费广告</h2><a href="javascript:;" class="ad">制作展示广告</a><a href="javascript:;" class="why">为什么要制作展示广告?</a></div>' +
     '<div class="face back cardAK"><h2>公司或名牌名字</h2><div class="backInput"><input type="text" placeholder="请输入"/></div>' +
-    '<h2>上传LOGO</h2><div class="backInput"><form id="LOGO" action="https://hboss.htmlk.cn/job/index/uploadImage" method="post" enctype="multipart/form-data"><input id="imageFile" type="file" name="imageFile"></form></div>' +
-    '<h2>上传宣传图片</h2><div class="backInput"><form id="myArticleForm" action="https://hboss.htmlk.cn/job/index/uploadImage" method="post" enctype="multipart/form-data"><input id="imageFile" type="file" name="imageFile"></form></div>' +
-    '<h2>上传宣传二维码</h2><div class="backInput"><form id="formBox1" action="https://hboss.htmlk.cn/job/index/uploadImage" method="post" enctype="multipart/form-data"><input id="imageFile" type="file" name="imageFile"></form></div>' +
+    '<h2>上传LOGO</h2><div class="backInput"><form id="LOGO" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><img><a href="javascript:;">更换图片</a><input id="imageFile" type="file" name="imageFile"></form></div>' +
+    '<h2>上传宣传图片</h2><div class="backInput"><form id="myArticleForm" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><img><a href="javascript:;">更换图片</a><input id="imageFile" type="file" name="imageFile"></form></div>' +
+    '<h2>上传宣传二维码</h2><div class="backInput"><form id="formBox1" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><input id="imageFile" type="file" name="imageFile"></form></div>' +
     '<h2>一句话广告语</h2><textarea name="name"></textarea>' +
     '<a href="javascript:;" class="return">取消</a>'
   '</div></div>';
   $('.article').append(company);
+  $.ajax({
+    url: url + 'job/user/findCompanyByUserId',
+    data: {
+      userId: userId
+    },
+    success: function(res) {
+      $('.cardAK .backInput:eq(0) input').val(res.data.name);
+      if (res.data.logo != '') {
+        $('#LOGO input').css('display', 'none');
+        $('#LOGO img').attr('src', res.data.logo);
+      } else {
+        $('#LOGO img,#LOGO a').css('display', 'none');
+      }
+      if (res.data.publicity != '') {
+        $('#myArticleForm input').css('display', 'none');
+        $('#myArticleForm img').attr('src', res.data.publicity);
+      } else {
+        $('#myArticleForm img,#myArticleForm a').css('display', 'none');
+      }
+      if (res.data.QRCode != '') {
+        $('#formBox1 input').css('display', 'none');
+        $('#formBox1 img').attr('src', res.data.QRCode);
+      } else {
+        $('#formBox1 img,#formBox1 a').css('display', 'none');
+      }
+      $('form input').change(function() {
+        $(this).parent().submit();
+      })
+      $('#LOGO').ajaxForm({
+        dataType: 'json',
+        success: function(data) {
+          $('#LOGO img').attr('src', data.urlPath);
+          $('#LOGO input').css('display', 'none');
+          $('#LOGO img').css('display', 'inline-block');
+          $('#LOGO a').css('display', 'inline-block');
+        }
+      });
+      $('#myArticleForm').ajaxForm({
+        dataType: 'json',
+        success: function(data) {
+          $('#myArticleForm img').attr('src', data.urlPath);
+          $('#myArticleForm input').css('display', 'none');
+          $('#myArticleForm img').css('display', 'inline-block');
+          $('#myArticleForm a').css('display', 'inline-block');
+        }
+      });
+      $('#formBox1').ajaxForm({
+        dataType: 'json',
+        success: function(data) {
+          $('#formBox1 img').attr('src', data.urlPath);
+          $('#formBox1 input').css('display', 'none');
+          $('#formBox1 img').css('display', 'inline-block');
+          $('#formBox1 a').css('display', 'inline-block');
+        }
+      });
+    }
+  })
 }
 //编辑公司
 
@@ -467,7 +536,7 @@ function recruitJob() {
     jobSalary = '',
     jobRequirements = '';
   for (var i = 0; i < jobInfoConfig.cityList.length; i++) {
-    cityList += '<a href="javascript:;">' + jobInfoConfig.cityList[i].name + '</a>';
+    cityList += '<a class="' + jobInfoConfig.cityList[i].id + '" href="javascript:;">' + jobInfoConfig.cityList[i].name + '</a>';
   }
   for (var i = 0; i < jobInfoConfig.jobType.length; i++) {
     jobType += '<a href="javascript:;">' + jobInfoConfig.jobType[i].codeDesc + '</a>';
@@ -485,21 +554,117 @@ function recruitJob() {
     jobRequirements += '<a href="javascript:;">' + jobInfoConfig.jobRequirements[i].codeDesc + '</a>';
   }
   var job = '<div class="recruit">' +
-    '<h2>城市</h2><div class="backInput">' + cityList + '</div>' +
-    '<h2>工作种类</h2><div class="backInput">' + jobType + '</div>' +
-    '<h2>工作性质</h2><div class="backInput">' + jobNature + '</div>' +
-    '<h2>福利待遇</h2><div class="backInput">' + jobWelfare + '</div>' +
-    '<h2>薪资区间</h2><div class="backInput">' + jobSalary + '</div>' +
-    '<h2>居留要求</h2><div class="backInput">' + jobRequirements + '</div>' +
-    '<div class="backInput border-top"><label><span>*</span>招聘标题</label><input type="text" placeholder="请输入标题"></div>' +
-    '<div class="backInput"><label><span>*</span>联系电话</label><input type="text" placeholder="请输入电话"></div>' +
+    '<h2>城市</h2><div id="cityList" class="backInput">' + cityList + '</div>' +
+    '<h2>工作种类</h2><div id="jobType" class="backInput">' + jobType + '</div>' +
+    '<h2>工作性质</h2><div id="jobNature" class="backInput">' + jobNature + '</div>' +
+    '<h2>福利待遇</h2><div id="jobWelfare" class="backInput">' + jobWelfare + '</div>' +
+    '<h2>薪资区间</h2><div id="jobSalary" class="backInput">' + jobSalary + '</div>' +
+    '<h2>居留要求</h2><div id="jobRequirements" class="backInput">' + jobRequirements + '</div>' +
+    '<div class="backInput border-top"><label><span>*</span>招聘标题</label><input id="recruitTitle" type="text" placeholder="请输入标题"></div>' +
+    '<div class="backInput"><label><span>*</span>联系电话</label><input id="recruitTel" type="text" placeholder="请输入电话"></div>' +
     '<h3 class="border-top">详细工作要求或说明</h3>' +
     '<textarea placeholder="请输入要求"></textarea>' +
     '<div id="submit">发布</div>' +
     '</div>';
   $('.article').append(job);
+  recruitSubmit();
 }
 //编辑招聘信息
+
+function recruitSubmit() {
+  $('body').on('click', '.recruit #submit', function() {
+    var cityId = '',
+    companyName = '',
+    companyLogo = '',
+    companyPublicity = '',
+    companyQRCode = '',
+    companyInfo = '',
+    jobType = '',
+    jobNature= '',
+    jobWelfare = '',
+    jobSalary = '',
+    jobRequirements = '',
+    title = '',
+    tel = '',
+    details = '';
+    if($('#cityList .recruitActive').length != 0){
+      cityId = $('#cityList .recruitActive')[0].classList[0];
+    }else {
+      alert('请选择城市');
+    }
+    companyName = $('.cardAK .backInput:eq(0) input').val();
+    if(companyName != ''){
+      companyLogo = $('#LOGO img').attr('src');
+      companyPublicity = $('#myArticleForm img').attr('src');
+      companyQRCode = $('#formBox1 img').attr('src');
+      companyInfo = $('.cardAK textarea').val();
+    }
+    if($('#jobType .recruitActive').length != 0){
+      jobType = $('#jobType .recruitActive')[0].classList[0];
+    }else {
+      alert('请选择工作种类');
+    }
+    if($('#jobNature .recruitActive').length != 0){
+      jobNature = $('#jobNature .recruitActive')[0].classList[0];
+    }else {
+      alert('请选择工作性质');
+    }
+    if($('#jobWelfare .recruitActive').length != 0){
+      jobWelfare = $('#jobWelfare .recruitActive')[0].classList[0];
+    }else {
+      alert('请选择福利待遇');
+    }
+    if($('#jobSalary .recruitActive').length != 0){
+      jobSalary = $('#jobSalary .recruitActive')[0].classList[0];
+    }else {
+      alert('请选择薪资区间');
+    }
+    if($('#jobRequirements .recruitActive').length != 0){
+      jobRequirements = $('#jobRequirements .recruitActive')[0].classList[0];
+    }else {
+      alert('请选择居留要求');
+    }
+    if($('#recruitTitle').val() != ''){
+      title = $('#recruitTitle').val();
+    }else {
+      alert('请输入标题');
+    }
+    if($('#recruitTel').val() != ''){
+      tel = $('#recruitTel').val();
+    }else {
+      alert('请输入电话');
+    }
+    if($('.recruit textarea').val() != ''){
+      details = $('.recruit textarea').val();
+    }else {
+      alert('请输入详情');
+    }
+    if(cityId != '' && jobType != '' && jobNature != '' && jobWelfare != '' && jobSalary != '' && jobRequirements != '' && title != '' && tel != '' && details != ''){
+      $.ajax({
+        url: url + 'job/info/publishJob',
+        data: {
+          cityId: cityId,
+          jobType: jobType,
+          jobNature: jobNature,
+          jobWelfare: jobWelfare,
+          jobSalary: jobSalary,
+          jobRequirements: jobRequirements,
+          title: title,
+          tel: tel,
+          details: details,
+          companyName: companyName,
+          companyLogo: companyLogo,
+          companyPublicity: companyPublicity,
+          companyQRCode: companyQRCode,
+          companyInfo: companyInfo
+        },
+        success: function (res) {
+          console.log(res);
+        }
+      })
+    }
+  })
+}
 
 function someoneConfig(countriesId) {
   $.ajax({
