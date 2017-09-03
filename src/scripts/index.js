@@ -72,10 +72,12 @@ $(document).ready(function() {
   })
   //选择搜索选项
   $('.jobType').next().click(function() {
+    loading();
     searchJob();
   })
   //搜索职位
   $('.someone').next().click(function() {
+    loading();
     searchSomeone();
   })
   //搜索找人办事
@@ -85,6 +87,7 @@ $(document).ready(function() {
     $(this).addClass('active');
     switch (index) {
       case 0:
+        loading();
         if ($('.sort').length == 0) {
           mineBack();
         }
@@ -105,6 +108,7 @@ $(document).ready(function() {
         }
         break;
       case 2:
+        loading();
         searchSomeone();
         if ($('.sort').length == 0) {
           mineBack();
@@ -119,6 +123,7 @@ $(document).ready(function() {
           alert('请登录！');
         } else {
           if ($('.mineNav').length == 0) {
+            loading();
             myMessage();
           }
           $('.sort,.mineNav').css('display', 'block');
@@ -155,12 +160,14 @@ $(document).ready(function() {
   })
   //重新选择图片
   $('.articleRight').on('click', '.sort li', function() {
+    loading();
     sort($(this).index());
     $('.sortActive').removeClass();
     $(this).children().addClass('sortActive');
   })
   //sort
   $('.articleRight').on('click', '.mineNav li', function() {
+    loading();
     if ($(this).index() == 0) {
       myPublish()
     } else {
@@ -314,6 +321,7 @@ function someone(someone) {
 //append公众列表
 
 function index(countriesId, userId) {
+  loading();
   $.ajax({
     url: url + 'job/index/searchJobIndex',
     data: {
@@ -384,6 +392,7 @@ function indexList(data) {
       data[i].tel + '</div></div></a></li>'
   }
   $('.list').append(indexList);
+  endLoad();
 }
 //渲染列表
 
@@ -771,7 +780,7 @@ function myPublish() {
 //我的发布
 
 function myPublishButtom() {
-  $('.jobWelfareName').after('<div class="myPublishButtom"><a href="javascript:;">顶</a></div>');//<a href="javascript:;">关闭</a><a href="javascript:;">编辑</a>
+  $('.jobWelfareName').after('<div class="myPublishButtom"><a href="javascript:;">顶</a></div>'); //<a href="javascript:;">关闭</a><a href="javascript:;">编辑</a>
 }
 //我的发布按钮
 
@@ -791,6 +800,15 @@ function myCollection() {
 function shade() {
   $('body').append('<div id="shade"></div>');
   $('body').css('overflow', 'hidden');
+}
+
+function loading() {
+  $('body').append('<div id="loading"><img src="/images/loading.gif"></div>');
+  $('body').css('overflow', 'hidden');
+}
+
+function endLoad() {
+  $('#loading').remove();
 }
 
 function unShade() {
