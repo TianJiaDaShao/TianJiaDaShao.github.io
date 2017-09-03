@@ -220,7 +220,29 @@ $(document).ready(function() {
         })
         break;
       case 1:
-
+        var status;
+        var _this = this;
+        if ($(this).text() == '关闭') {
+          status = 1
+        }else {
+          status = 0
+        }
+        $.ajax({
+          url: url + 'job/user/infoOver',
+          data: {
+            type: type,
+            id: id,
+            status: status
+          },
+          success: function () {
+            console.log(status);
+            if(status == 1){
+              $(_this).text('开启')
+            }else {
+              $(_this).text('关闭')
+            }
+          }
+        })
         break;
       default:
 
@@ -380,7 +402,7 @@ function indexList(data) {
       }
     }
     indexList += '<li><a href="javascript:;"><div class="listTitle"><h2>' + data[i].title + '</h2><span>' +
-      jobSalaryName + '</span></div><div class="jobWelfareName"><dl>' +
+      jobSalaryName + '</span></div><div status="' + data[i].status + '" class="jobWelfareName"><dl>' +
       jobWelfareName + '</dl><span>' + createDate +
       '</span></div><div class="details">' + data[i].details +
       '</div><div class="company"><img src="' +
@@ -780,7 +802,15 @@ function myPublish() {
 //我的发布
 
 function myPublishButtom() {
-  $('.jobWelfareName').after('<div class="myPublishButtom"><a href="javascript:;">顶</a></div>'); //<a href="javascript:;">关闭</a><a href="javascript:;">编辑</a>
+  $('.jobWelfareName').after('<div class="myPublishButtom"></div>');
+  for (var i = 0; i < $('.jobWelfareName').length; i++) {
+    if ($('.jobWelfareName')[i].attributes[0].value == 0) {
+      $('.myPublishButtom')[i].innerHTML='<a href="javascript:;">顶</a><a href="javascript:;">关闭</a>';
+    } else {
+      $('.myPublishButtom')[i].innerHTML='<a href="javascript:;">顶</a><a href="javascript:;">开启</a>'; //<a href="javascript:;">编辑</a>
+    }
+  }
+
 }
 //我的发布按钮
 
@@ -809,6 +839,7 @@ function loading() {
 
 function endLoad() {
   $('#loading').remove();
+  $('body').css('overflow', 'auto');
 }
 
 function unShade() {
