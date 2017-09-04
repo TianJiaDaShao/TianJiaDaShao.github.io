@@ -451,8 +451,8 @@
   width: 710px;
   height: 600px;
   overflow-y: scroll;
-  position: absolute;
-  right: 0;
+  position: fixed;
+  margin-left: 400px;
   z-index: 1;
   background: #fff;
 }
