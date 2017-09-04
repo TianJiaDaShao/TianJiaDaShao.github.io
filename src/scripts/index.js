@@ -3,10 +3,27 @@ var url = 'https://pc.hboss.com/',
   userName = '',
   userHead = '',
   jobInfoConfig = '',
-  someOneConfig = '';
+  someOneConfig = '',
+  apikey = 'AIzaSyDofWG3q9axLTVA7rbJka3E6Ahh14NOfos';
 
 $(document).ready(function() {
-  if(IsPC() != true){
+  // getLocation();
+  //
+  // function getLocation() {
+  //   if (navigator.geolocation) {
+  //     navigator.geolocation.getCurrentPosition(showPosition);
+  //   } else {
+  //     x.innerHTML = "Geolocation is not supported by this browser.";
+  //   }
+  // }
+  //
+  // function showPosition(position) {
+  //   console.log(position.coords.latitude + ' ' + position.coords.longitude);
+  //   $.ajax({
+  //     url: ''
+  //   })
+  // }
+  if (IsPC() != true) {
     window.location.href = 'http://m.hboss.com'
   }
   var chioceCountry = false; //判断选择国家是否展开,false不展开
@@ -309,7 +326,7 @@ $(document).ready(function() {
               }
               $('#recruitTitle').val(data.title);
               $('#recruitTel').val(data.tel);
-              $('.recruit .backInput textarea').val(data.details);
+              $('.recruit textarea').val(data.details);
               $('.recruit #submit').addClass(id);
             }
           })
@@ -601,8 +618,8 @@ function editCompany() {
     '<div class="face back cardAK"><h2>公司或名牌名字</h2><div class="backInput"><input type="text" placeholder="请输入"/></div>' +
     '<h2>上传LOGO</h2><div class="backInput"><form id="LOGO" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><img><a href="javascript:;">更换图片</a><input id="imageFile" type="file" name="imageFile"></form></div>' +
     '<h2>上传宣传图片</h2><div class="backInput"><form id="myArticleForm" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><img><a href="javascript:;">更换图片</a><input id="imageFile" type="file" name="imageFile"></form></div>' +
-    '<h2>上传宣传二维码</h2><div class="backInput"><form id="formBox1" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><input id="imageFile" type="file" name="imageFile"></form></div>' +
-    '<h2>一句话广告语</h2><textarea name="name"></textarea>' +
+    '<h2>上传宣传二维码</h2><div class="backInput"><form id="formBox1" action="https://pc.hboss.com/job/index/uploadImage" method="post" enctype="multipart/form-data"><img><a href="javascript:;">更换图片</a><input id="imageFile" type="file" name="imageFile"></form></div>' +
+    '<h2>一句话广告语</h2><textarea id="AD" name="name"></textarea>' +
     '<a href="javascript:;" class="return">取消</a>'
   '</div></div>';
   $('.article').append(company);
@@ -631,6 +648,7 @@ function editCompany() {
       } else {
         $('#formBox1 img,#formBox1 a').css('display', 'none');
       }
+      $('#AD').val(res.data.info);
       $('form input').change(function() {
         $(this).parent().submit();
       })
@@ -739,7 +757,7 @@ function recruitSubmit() {
       companyLogo = $('#LOGO img').attr('src');
       companyPublicity = $('#myArticleForm img').attr('src');
       companyQRCode = $('#formBox1 img').attr('src');
-      companyInfo = $('.cardAK textarea').val();
+      companyInfo = $('#AD').val();
     }
     if ($('#jobType .recruitActive').length != 0) {
       jobType = $('#jobType .recruitActive').text();
@@ -806,9 +824,9 @@ function recruitSubmit() {
           companyInfo: companyInfo
         },
         success: function(res) {
-          console.log(res);
           unShade();
           alert('发布成功');
+          $('#pages li:eq(0)').click();
         }
       })
     }
@@ -937,16 +955,17 @@ function unShade() {
 }
 
 function IsPC() {
-    var userAgentInfo = navigator.userAgent;
-    var Agents = ["Android", "iPhone",
-                "SymbianOS", "Windows Phone",
-                "iPad", "iPod"];
-    var flag = true;
-    for (var v = 0; v < Agents.length; v++) {
-        if (userAgentInfo.indexOf(Agents[v]) > 0) {
-            flag = false;
-            break;
-        }
+  var userAgentInfo = navigator.userAgent;
+  var Agents = ["Android", "iPhone",
+    "SymbianOS", "Windows Phone",
+    "iPad", "iPod"
+  ];
+  var flag = true;
+  for (var v = 0; v < Agents.length; v++) {
+    if (userAgentInfo.indexOf(Agents[v]) > 0) {
+      flag = false;
+      break;
     }
-    return flag;
+  }
+  return flag;
 }

@@ -241,7 +241,11 @@
   margin: 0 auto;
   width: 138px;
   height: 34px;
-  background: url(/images/search.png);
+  color: #fff;
+  line-height: 34px;
+  text-align: center;
+  font-size: 16px;
+  background: url(/images/search.png) no-repeat;
 }
 
 .articleRight {
@@ -305,7 +309,7 @@
 .listTitle span {
   float: right;
   padding-right: 28px;
-  font-size: 11px;
+  font-size: 13px;
   color: #ff2222;
   font-weight: bold;
 }
@@ -326,7 +330,7 @@
   float: right;
   height: 30px;
   line-height: 30px;
-  font-size: 11px;
+  font-size: 13px;
   color: #888;
 }
 
