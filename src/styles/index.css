@@ -93,7 +93,7 @@
   overflow: hidden;
 }
 
-.articleLeft,.mineMenu {
+.articleLeft, .mineMenu {
   float: left;
   width: 228px;
   padding-top: 22px;
@@ -101,20 +101,20 @@
   position: relative;
 }
 
-.mineMenu .head{
+.mineMenu .head {
   width: 230px;
   height: 188px;
   background: url('/images/headBG.png') no-repeat;
 }
 
-.mineMenu .head img{
+.mineMenu .head img {
   width: 96px;
   border-radius: 96px;
   margin-left: 67px;
   margin-top: 26px;
 }
 
-.mineMenu .phoneNum h2{
+.mineMenu .phoneNum h2 {
   height: 32px;
   line-height: 32px;
   text-align: center;
@@ -123,12 +123,12 @@
   background: #e6e6e6 url('/images/phone.png') 20px center no-repeat;
 }
 
-.mineMenu .phoneNum div{
+.mineMenu .phoneNum div {
   padding: 16px 12px;
   overflow: hidden;
 }
 
-.mineMenu .phoneNum input{
+.mineMenu .phoneNum input {
   width: 120px;
   float: left;
   height: 27px;
@@ -136,7 +136,7 @@
   padding: 0 10px;
 }
 
-.mineMenu .phoneNum span{
+.mineMenu .phoneNum span {
   margin-top: 3px;
   width: 42px;
   height: 21px;
@@ -147,7 +147,7 @@
   background: #e6e6e6;
 }
 
-.mineMenu .phoneNum h5{
+.mineMenu .phoneNum h5 {
   height: 24px;
   font-size: 12px;
   line-height: 24px;
@@ -157,7 +157,7 @@
   color: #808080;
 }
 
-.mineMenu .suggestion h2{
+.mineMenu .suggestion h2 {
   height: 32px;
   line-height: 32px;
   text-align: center;
@@ -166,13 +166,13 @@
   background: #e6e6e6 url('/images/suggestion.png') 20px center no-repeat;
 }
 
-.mineMenu .suggestion textarea{
+.mineMenu .suggestion textarea {
   width: 205px;
   height: 150px;
   margin: 12px;
 }
 
-.mineMenu .suggestion span{
+.mineMenu .suggestion span {
   display: block;
   width: 42px;
   height: 21px;
@@ -249,7 +249,7 @@
   width: 762px;
 }
 
-.sort ,.mineNav{
+.sort, .mineNav {
   margin-top: 22px;
   background: #fafafa;
   width: 100%;
@@ -257,7 +257,7 @@
   font-size: 18px;
 }
 
-.sort li ,.mineNav li{
+.sort li, .mineNav li {
   float: left;
 }
 
@@ -270,7 +270,7 @@
   color: #989898;
 }
 
-.mineNav a{
+.mineNav a {
   display: block;
   width: 366px;
   height: 38px;
@@ -287,6 +287,7 @@
 .list li {
   padding: 24px 0 14px 0;
   border-bottom: 1px dotted #e6e6e6;
+  position: relative;
 }
 
 .listTitle {
@@ -337,13 +338,13 @@
   margin-right: 6px;
 }
 
-.myPublishButtom{
+.myPublishButtom {
   overflow: hidden;
   margin-top: 10px;
   padding-left: 28px;
 }
 
-.myPublishButtom a{
+.myPublishButtom a {
   float: left;
   width: 30px;
   text-align: center;
@@ -351,6 +352,22 @@
   border-radius: 20px;
   padding: 6px;
   margin-right: 10px;
+}
+
+.myPublishButtom a img {
+  position: absolute;
+  top: 20px;
+  left: 360px;
+  z-index: 1;
+  transform: rotate(14deg);
+  -ms-transform: rotate(14deg);
+  /* IE 9 */
+  -moz-transform: rotate(14deg);
+  /* Firefox */
+  -webkit-transform: rotate(14deg);
+  /* Safari 和 Chrome */
+  -o-transform: rotate(14deg);
+  /* Opera */
 }
 
 .details {
@@ -445,7 +462,7 @@
   color: #666;
 }
 
-.recruit .backInput a, .recruitSomeone .backInput a, .recruitSomeone .someoneType a{
+.recruit .backInput a, .recruitSomeone .backInput a, .recruitSomeone .someoneType a {
   float: left;
   height: 32px;
   line-height: 32px;
@@ -453,7 +470,7 @@
   margin-right: 20px;
 }
 
-.recruitSomeone .someoneType{
+.recruitSomeone .someoneType {
   padding: 12px;
   overflow: hidden;
 }
@@ -467,24 +484,24 @@
   color: #ff0000;
 }
 
-.recruit .backInput input, .recruitSomeone .backInput input{
+.recruit .backInput input, .recruitSomeone .backInput input {
   font-size: 13px;
   width: 500px;
 }
 
-.backInput form img{
+.backInput form img {
   height: 32px;
   margin: 0 30px;
 }
 
-.recruit h3, .recruitSomeone h3{
+.recruit h3, .recruitSomeone h3 {
   font-size: 18px;
   padding: 10px 22px;
   color: #666;
   font-weight: 0;
 }
 
-.recruit textarea, .recruitSomeone textarea{
+.recruit textarea, .recruitSomeone textarea {
   padding: 18px 12px;
   margin: 0 22px;
   width: 600px;
@@ -492,7 +509,7 @@
   font-size: 14px;
 }
 
-.recruit #submit, .recruitSomeone #submit{
+.recruit #submit, .recruitSomeone #submit {
   width: 147px;
   height: 37px;
   border-radius: 37px;
@@ -505,7 +522,7 @@
   margin: 20px 36px 34px;
 }
 
-.recruit .recruitActive{
+.recruit .recruitActive {
   color: #cd0200;
 }
 

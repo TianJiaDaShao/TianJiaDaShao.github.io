@@ -6,6 +6,9 @@ var url = 'https://pc.hboss.com/',
   someOneConfig = '';
 
 $(document).ready(function() {
+  if(IsPC() != true){
+    window.location.href = 'http://m.hboss.com'
+  }
   var chioceCountry = false; //判断选择国家是否展开,false不展开
   user();
   jobConfig(1); //初始化搜索参数
@@ -185,15 +188,24 @@ $(document).ready(function() {
     recruitSomeone();
   })
   //发布找人办事
-  $('body').on('click', '.recruit .backInput a', function() {
+  $('body').on('click', '#cityList a,#jobType a,#jobNature a,#jobSalary a,#jobRequirements a', function() {
     $(this).parent().children().removeClass('recruitActive');
     $(this).addClass('recruitActive');
+  })
+  //选择发布项
+  $('body').on('click', '#jobWelfare a', function() {
+    if ($(this)[0].className == 'recruitActive') {
+      $(this).removeClass()
+    } else {
+      $(this).addClass('recruitActive')
+    }
   })
   $('body').on('click', '#shade', function() {
     unShade();
   })
   //消除shade
-  $('body').on('click', '.myPublishButtom a', function() {
+  $('body').on('click', '.myPublishButtom a', function(e) {
+    e.stopPropagation();
     var index = $(this).index(),
       id = $(this).parent().next().next().next().children()[1].attributes[0].value,
       type = $(this).parent().next().next().next().children()[1].attributes[1].value;
@@ -220,11 +232,12 @@ $(document).ready(function() {
         })
         break;
       case 1:
+        loading();
         var status;
         var _this = this;
         if ($(this).text() == '关闭') {
           status = 1
-        }else {
+        } else {
           status = 0
         }
         $.ajax({
@@ -234,15 +247,75 @@ $(document).ready(function() {
             id: id,
             status: status
           },
-          success: function () {
-            console.log(status);
-            if(status == 1){
-              $(_this).text('开启')
-            }else {
-              $(_this).text('关闭')
+          success: function() {
+            if (status == 1) {
+              $(_this).text('开启');
+              $(_this).append('<img src="/images/success.png">');
+            } else {
+              $(_this).text('关闭');
+              $(_this).children().remove();
             }
+            endLoad();
           }
         })
+        break;
+      case 2:
+        if ($(this).parent().prev().prev().children()[1].innerText != '找活挣钱') {
+          $('#pages li:eq(1)').click();
+          var id = $(this).parent().next().next().next().children()[1].id;
+          $.ajax({
+            url: url + 'job/info/jobInfoDetails',
+            data: {
+              jobId: id,
+              userId: userId
+            },
+            success: function(res) {
+              var data = res.data;
+              var jobWelfareArr = [];
+              if (data.jobWelfareName != null) {
+                jobWelfareArr = data.jobWelfareName.split('&amp;');
+              }
+              for (var i = 0; i < $('#cityList a').length; i++) {
+                if ($('#cityList a')[i].innerText == data.cityName) {
+                  $('#cityList a')[i].className += ' recruitActive'
+                }
+              }
+              for (var i = 0; i < $('#jobType a').length; i++) {
+                if ($('#jobType a')[i].innerText == data.jobTypeName) {
+                  $('#jobType a')[i].className += ' recruitActive'
+                }
+              }
+              for (var i = 0; i < $('#jobNature a').length; i++) {
+                if ($('#jobNature a')[i].innerText == data.jobNatureName) {
+                  $('#jobNature a')[i].className += ' recruitActive'
+                }
+              }
+              for (var i = 0; i < $('#jobWelfare a').length; i++) {
+                for (var j = 0; j < jobWelfareArr.length; j++) {
+                  if ($('#jobWelfare a')[i].innerText == jobWelfareArr[j]) {
+                    $('#jobWelfare a')[i].className += ' recruitActive'
+                  }
+                }
+              }
+              for (var i = 0; i < $('#jobSalary a').length; i++) {
+                if ($('#jobSalary a')[i].innerText == data.jobSalaryName) {
+                  $('#jobSalary a')[i].className += ' recruitActive'
+                }
+              }
+              for (var i = 0; i < $('#jobRequirements a').length; i++) {
+                if ($('#jobRequirements a')[i].innerText == data.jobRequirementsName) {
+                  $('#jobRequirements a')[i].className += ' recruitActive'
+                }
+              }
+              $('#recruitTitle').val(data.title);
+              $('#recruitTel').val(data.tel);
+              $('.recruit .backInput textarea').val(data.details);
+              $('.recruit #submit').addClass(id);
+            }
+          })
+        } else {
+
+        }
         break;
       default:
 
@@ -638,7 +711,8 @@ function recruitJob() {
 
 function recruitSubmit() {
   $('body').on('click', '.recruit #submit', function() {
-    var cityId = '',
+    var jobId = null,
+      cityId = '',
       companyName = '',
       companyLogo = '',
       companyPublicity = '',
@@ -652,6 +726,9 @@ function recruitSubmit() {
       title = '',
       tel = '',
       details = '';
+    if ($('.recruit #submit')[0].className != '') {
+      jobId = $('.recruit #submit')[0].className
+    }
     if ($('#cityList .recruitActive').length != 0) {
       cityId = $('#cityList .recruitActive')[0].classList[0];
     } else {
@@ -665,27 +742,30 @@ function recruitSubmit() {
       companyInfo = $('.cardAK textarea').val();
     }
     if ($('#jobType .recruitActive').length != 0) {
-      jobType = $('#jobType .recruitActive')[0].classList[0];
+      jobType = $('#jobType .recruitActive').text();
     } else {
       alert('请选择工作种类');
     }
     if ($('#jobNature .recruitActive').length != 0) {
-      jobNature = $('#jobNature .recruitActive')[0].classList[0];
+      jobNature = $('#jobNature .recruitActive').text();
     } else {
       alert('请选择工作性质');
     }
     if ($('#jobWelfare .recruitActive').length != 0) {
-      jobWelfare = $('#jobWelfare .recruitActive')[0].classList[0];
+      jobWelfare = $('#jobWelfare .recruitActive')[0].innerText;
+      for (var i = 1; i < $('#jobWelfare .recruitActive').length; i++) {
+        jobWelfare += '&amp;' + $('#jobWelfare .recruitActive')[i].innerText
+      }
     } else {
       alert('请选择福利待遇');
     }
     if ($('#jobSalary .recruitActive').length != 0) {
-      jobSalary = $('#jobSalary .recruitActive')[0].classList[0];
+      jobSalary = $('#jobSalary .recruitActive').text();
     } else {
       alert('请选择薪资区间');
     }
     if ($('#jobRequirements .recruitActive').length != 0) {
-      jobRequirements = $('#jobRequirements .recruitActive')[0].classList[0];
+      jobRequirements = $('#jobRequirements .recruitActive').text();
     } else {
       alert('请选择居留要求');
     }
@@ -708,6 +788,8 @@ function recruitSubmit() {
       $.ajax({
         url: url + 'job/info/publishJob',
         data: {
+          id: jobId,
+          userId: userId,
           cityId: cityId,
           jobType: jobType,
           jobNature: jobNature,
@@ -725,11 +807,14 @@ function recruitSubmit() {
         },
         success: function(res) {
           console.log(res);
+          unShade();
+          alert('发布成功');
         }
       })
     }
   })
 }
+//发布招聘信息
 
 function someoneConfig(countriesId) {
   $.ajax({
@@ -805,9 +890,9 @@ function myPublishButtom() {
   $('.jobWelfareName').after('<div class="myPublishButtom"></div>');
   for (var i = 0; i < $('.jobWelfareName').length; i++) {
     if ($('.jobWelfareName')[i].attributes[0].value == 0) {
-      $('.myPublishButtom')[i].innerHTML='<a href="javascript:;">顶</a><a href="javascript:;">关闭</a>';
+      $('.myPublishButtom')[i].innerHTML = '<a href="javascript:;">顶</a><a href="javascript:;">关闭</a><a href="javascript:;">编辑</a>';
     } else {
-      $('.myPublishButtom')[i].innerHTML='<a href="javascript:;">顶</a><a href="javascript:;">开启</a>'; //<a href="javascript:;">编辑</a>
+      $('.myPublishButtom')[i].innerHTML = '<a href="javascript:;">顶</a><a href="javascript:;"><img src="/images/success.png">开启</a><a href="javascript:;">编辑</a>';
     }
   }
 
@@ -849,4 +934,19 @@ function unShade() {
   $('.recruitSomeone').remove();
   $('.articleLeft').css('zIndex', 0);
   $('body').css('overflow', 'auto');
+}
+
+function IsPC() {
+    var userAgentInfo = navigator.userAgent;
+    var Agents = ["Android", "iPhone",
+                "SymbianOS", "Windows Phone",
+                "iPad", "iPod"];
+    var flag = true;
+    for (var v = 0; v < Agents.length; v++) {
+        if (userAgentInfo.indexOf(Agents[v]) > 0) {
+            flag = false;
+            break;
+        }
+    }
+    return flag;
 }
