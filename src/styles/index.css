@@ -527,7 +527,7 @@
   margin: 20px 36px 34px;
 }
 
-.recruit .recruitActive {
+.recruit .recruitActive, .recruitSomeone .recruitActive{
   color: #cd0200;
 }
 

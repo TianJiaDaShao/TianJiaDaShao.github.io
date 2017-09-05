@@ -4,7 +4,8 @@ var url = 'https://pc.hboss.com/',
   userHead = '',
   jobInfoConfig = '',
   someOneConfig = '',
-  apikey = 'AIzaSyDofWG3q9axLTVA7rbJka3E6Ahh14NOfos';
+  apikey = 'AIzaSyDofWG3q9axLTVA7rbJka3E6Ahh14NOfos',
+  blacklist = '';
 
 $(document).ready(function() {
   // getLocation();
@@ -121,10 +122,14 @@ $(document).ready(function() {
         if (userId == '') {
           alert('请登录！');
         } else {
-          unShade();
-          shade();
-          editCompany();
-          recruitJob();
+          if (blacklist == 0) {
+            unShade();
+            shade();
+            editCompany();
+            recruitJob();
+          } else {
+            alert('系统判定您为恶意操作者，请联系管理员申请恢复发布功能')
+          }
         }
         break;
       case 2:
@@ -198,14 +203,13 @@ $(document).ready(function() {
   })
   //mineNav
   $('.publishSom').click(function() {
-    $(window).scrollTop(0);
     unShade();
     shade();
     editCompany();
     recruitSomeone();
   })
   //发布找人办事
-  $('body').on('click', '#cityList a,#jobType a,#jobNature a,#jobSalary a,#jobRequirements a', function() {
+  $('body').on('click', '#cityList a,#jobType a,#jobNature a,#jobSalary a,#jobRequirements a,.recruitSomeone a', function() {
     $(this).parent().children().removeClass('recruitActive');
     $(this).addClass('recruitActive');
   })
@@ -221,6 +225,10 @@ $(document).ready(function() {
     unShade();
   })
   //消除shade
+  $('body').on('click', '.suggestion span', function() {
+    saveProposal();
+  })
+  //意见反馈
   $('body').on('click', '.myPublishButtom a', function(e) {
     e.stopPropagation();
     var index = $(this).index(),
@@ -331,11 +339,39 @@ $(document).ready(function() {
             }
           })
         } else {
-
+          unShade();
+          shade();
+          editCompany();
+          recruitSomeone();
+          var id = $(this).parent().next().next().next().children()[1].id;
+          $.ajax({
+            url: url + 'job/someone/someoneInfo',
+            data: {
+              someoneId: id,
+              userId: userId
+            },
+            success: function(res) {
+              var data = res.data;
+              console.log(data);
+              for (var i = 0; i < $('.recruitSomeone .backInput:eq(0) a').length; i++) {
+                if ($('.recruitSomeone .backInput:eq(0) a')[i].innerText == data.cityName) {
+                  $('.recruitSomeone .backInput:eq(0) a')[i].className += ' recruitActive'
+                }
+              }
+              for (var i = 0; i < $('.someoneType a').length; i++) {
+                if ($('.someoneType a')[i].innerText == data.someoneTypeName) {
+                  $('.someoneType a')[i].className += ' recruitActive'
+                }
+              }
+              $('#recruitTitle').val(data.title);
+              $('#recruitTel').val(data.tel);
+              $('.recruitSomeone textarea').val(data.details);
+              $('.recruitSomeone #submit').addClass(id);
+            }
+          })
         }
         break;
       default:
-
     }
   })
 })
@@ -369,12 +405,15 @@ function userInfo() {
       userId: userId
     },
     success: function(res) {
+      console.log(res);
+      blacklist = res.user.blacklist;
       userName = res.user.name;
       userHead = res.user.head;
       $('.headRight span a').text('欢迎！' + userName);
     }
   })
 }
+//获取用户信息
 
 function jobConfig(countriesId) {
   $.ajax({
@@ -402,6 +441,7 @@ function login() {
     }
   })
 }
+//跳转至登陆页
 
 function cityList(cityList) {
   $('.cityList').html('');
@@ -860,15 +900,92 @@ function recruitSomeone() {
   var someone = '<div class="recruitSomeone">' +
     '<h2>城市</h2><div class="backInput">' + cityList + '</div>' +
     '<h2>分类</h2><div class="someoneType">' + someoneType + '</div>' +
-    '<div class="backInput border-top"><label><span>*</span>招聘标题</label><input type="text" placeholder="请输入标题"></div>' +
-    '<div class="backInput"><label><span>*</span>联系电话</label><input type="text" placeholder="请输入电话"></div>' +
+    '<div class="backInput border-top"><label><span>*</span>招聘标题</label><input type="text" id="recruitTitle" placeholder="请输入标题"></div>' +
+    '<div class="backInput"><label><span>*</span>联系电话</label><input type="text" id="recruitTel" placeholder="请输入电话"></div>' +
     '<h3 class="border-top">详细说明</h3>' +
     '<textarea placeholder="请输入要求"></textarea>' +
     '<div id="submit">发布</div>' +
     '</div>';
   $('.article').append(someone);
+  someoneSubmit();
 }
 //打开编辑找人办事页
+
+function someoneSubmit() {
+  $('body').on('click', '.recruit #submit', function() {
+    var someoneId = null,
+      cityId = '',
+      companyName = '',
+      companyLogo = '',
+      companyPublicity = '',
+      companyQRCode = '',
+      companyInfo = '',
+      someoneType = '',
+      title = '',
+      tel = '',
+      details = '';
+    if ($('.recruitSomeone #submit')[0].className != '') {
+      someoneId = $('.recruitSomeone #submit')[0].className
+    }
+    if ($('.recruitSomeone .backInput:eq(0) .recruitActive').length != 0) {
+      cityId = $('.recruitSomeone .backInput:eq(0) .recruitActive')[0].classList[0];
+    } else {
+      alert('请选择城市');
+    }
+    companyName = $('.cardAK .backInput:eq(0) input').val();
+    if (companyName != '') {
+      companyLogo = $('#LOGO img').attr('src');
+      companyPublicity = $('#myArticleForm img').attr('src');
+      companyQRCode = $('#formBox1 img').attr('src');
+      companyInfo = $('#AD').val();
+    }
+    if ($('.someoneType .recruitActive').length != 0) {
+      someoneType = $('.someoneType .recruitActive')[0].classList[0];
+    } else {
+      alert('请选择分类')
+    }
+    if ($('#recruitTitle').val() != '') {
+      title = $('#recruitTitle').val();
+    } else {
+      alert('请输入标题');
+    }
+    if ($('#recruitTel').val() != '') {
+      tel = $('#recruitTel').val();
+    } else {
+      alert('请输入电话');
+    }
+    if ($('.recruitSomeone textarea').val() != '') {
+      details = $('.recruitSomeone textarea').val();
+    } else {
+      alert('请输入详情');
+    }
+    if (cityId != '' && someoneType != '' && title != '' && tel != '' && details != '') {
+      $.ajax({
+        url: url + 'job/someone/publishSom',
+        data: {
+          id: someoneId,
+          userId: userId,
+          cityId: cityId,
+          companyName: companyName,
+          companyLogo: companyLogo,
+          companyPublicity: companyPublicity,
+          companyQRCode: companyQRCode,
+          companyInfo: companyInfo,
+          someoneType: someoneType,
+          title: title,
+          tel: tel,
+          details: details
+        },
+        success: function() {
+          unShade();
+          alert('发布成功');
+          $('#pages li:eq(2)').click();
+        }
+      })
+    }
+  })
+}
+//发布找人办事信息
 
 function mineBack() {
   $('.mineMenu').remove();
@@ -953,6 +1070,22 @@ function unShade() {
   $('.articleLeft').css('zIndex', 0);
   $('body').css('overflow', 'auto');
 }
+
+function saveProposal() {
+  var details = $('.suggestion textarea').val();
+  $.ajax({
+    url: url + 'job/user/saveProposal',
+    data: {
+      userId: userId,
+      userName: userName,
+      details: details
+    },
+    success: function() {
+      alert('感谢您的宝贵建议！')
+    }
+  })
+}
+//反馈
 
 function IsPC() {
   var userAgentInfo = navigator.userAgent;

@@ -23,7 +23,7 @@
 }
 .headRight{
   float: right;
-  width: 130px;
+  margin-right: 10px;
 }
 .headRight a{
   color: #999;
