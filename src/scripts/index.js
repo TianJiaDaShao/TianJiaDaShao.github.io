@@ -203,10 +203,18 @@ $(document).ready(function() {
   })
   //mineNav
   $('.publishSom').click(function() {
-    unShade();
-    shade();
-    editCompany();
-    recruitSomeone();
+    if (userId == '') {
+      alert('请登录！');
+    } else {
+      if (blacklist == 0) {
+        unShade();
+        shade();
+        editCompany();
+        recruitSomeone();
+      } else {
+        alert('系统判定您为恶意操作者，请联系管理员申请恢复发布功能')
+      }
+    }
   })
   //发布找人办事
   $('body').on('click', '#cityList a,#jobType a,#jobNature a,#jobSalary a,#jobRequirements a,.recruitSomeone a', function() {
