@@ -34,6 +34,7 @@ $(document).ready(function() {
   $('.list').on('click', '.unlike', function(e) {
     e.stopPropagation();
     if (userId == '') {
+      alert('请登录！');
       login();
     } else {
       var likeIndex = $(this).parent().parent().parent().index(),
@@ -47,6 +48,7 @@ $(document).ready(function() {
   $('.list').on('click', '.like', function(e) {
     e.stopPropagation();
     if (userId == '') {
+      alert('请登录！');
       login();
     } else {
       var likeIndex = $(this).parent().parent().parent().index(),
@@ -120,6 +122,7 @@ $(document).ready(function() {
         break;
       case 1:
         if (userId == '') {
+          alert('请登录！');
           login();
         } else {
           if (blacklist == 0) {
@@ -145,6 +148,7 @@ $(document).ready(function() {
         break;
       case 3:
         if (userId == '') {
+          alert('请登录！');
           login();
         } else {
           if ($('.mineNav').length == 0) {
@@ -204,6 +208,7 @@ $(document).ready(function() {
   //mineNav
   $('.publishSom').click(function() {
     if (userId == '') {
+      alert('请登录！');
       login();
     } else {
       if (blacklist == 0) {
