@@ -27,10 +27,12 @@ $(document).ready(function() {
   if (IsPC() != true) {
     window.location.href = 'http://m.hboss.com'
   }
-  var chioceCountry = false; //判断选择国家是否展开,false不展开
   user();
   jobConfig(1); //初始化搜索参数
   someoneConfig(1);
+  $('.headLeft a').click(function () {
+    window.location.href = 'http://www.hboss.com'
+  })
   $('.list').on('click', '.unlike', function(e) {
     e.stopPropagation();
     if (userId == '') {
@@ -64,12 +66,10 @@ $(document).ready(function() {
     window.location.href = 'http://localhost/index.html';
   })
   $('.country a').click(function() {
-    if (chioceCountry == false) {
-      $('#chioceCountry').css('display', 'block');
-    } else {
-      $('#chioceCountry').css('display', 'none');
-    }
-    chioceCountry = !chioceCountry;
+    $('#chioceCountry').show();
+  })
+  $('#chioceCountry').mouseleave(function() {
+    $(this).hide(2500);
   })
   //切换选择国家是否展开
   $('#chioceCountry li').click(function() {
@@ -79,7 +79,6 @@ $(document).ready(function() {
     $('.country a span').text($(this).text());
     $('.country a span')[0].id = $(this)[0].id;
     $('#chioceCountry').css('display', 'none');
-    chioceCountry = false;
   })
   //切换国家
   $('.headRight span a,.headRight .login a').click(function() {

@@ -214,8 +214,8 @@
   background: #fff;
 }
 
-.optionActive {
-  border: 1px solid #e3e3e3;
+.optionActive a{
+  color: #726eff;
   background: #fff;
 }
 
@@ -528,6 +528,9 @@
 }
 
 .recruit .recruitActive, .recruitSomeone .recruitActive{
+  padding: 0 5px;
+  border: 1px solid #e3e3e3;
+  border-radius: 10px;
   color: #cd0200;
 }
 
